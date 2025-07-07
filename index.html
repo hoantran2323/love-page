@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chị có iu em hongg</title>
+  <style>
+    body {
+      position: relative;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #fff0f5;
+      color: #333;
+      text-align: center;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .question {
+      font-size: 24px;
+      margin-bottom: 10px;
+      max-width: 90%;
+    }
+
+    .expression {
+      font-size: 32px;
+      animation: bounce 1s infinite;
+      margin-bottom: 20px;
+      min-height: 50px;
+    }
+
+    #yesButton {
+      font-size: 24px;
+      padding: 15px 40px;
+      background-color: #ffc8dd;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      z-index: 10;
+      max-width: 90%;
+      word-wrap: break-word;
+      cursor: pointer;
+    }
+
+    #noButton {
+      font-size: 18px;
+      padding: 10px 30px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+      z-index: 10;
+      position: relative;
+    }
+
+    #noButton:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(255,255,255,0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: bold;
+      color: #ff4081;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+
+    .overlay-text {
+      margin-bottom: 20px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="question" id="mainQuestion">Chị có iu em hongg 💖</div>
+  <div class="expression" id="expression">🐱</div>
+  <button id="yesButton">Có</button>
+  <button id="noButton">Không</button>
+
+  <div id="overlay">
+    <div class="overlay-text">Em cũm iu chị nhìu lắm</div>
+    <div class="expression">🐱</div>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById('yesButton');
+    const noBtn = document.getElementById('noButton');
+    const question = document.getElementById('mainQuestion');
+    const expression = document.getElementById('expression');
+    const overlay = document.getElementById('overlay');
+
+    let clickCount = 0;
+    let fontSize = 24;
+    let paddingV = 15;
+    let paddingH = 40;
+
+    const messages = [
+      "Chị có iu em hongg 💖",
+      "Đi mà iu em đi 🥺",
+      "Chị hongg iu em là em buồn lắmm áa 😭",
+      "Chị đang suy nghĩ phải hôngg? 🧐",
+      "Em năn nỉ chị đó 😳",
+      "Chị iu em một chút thui cũng được 🥺",
+      "Em tặng chị kẹo nè 🍬",
+      "Thôi đừng ngại mà 😌",
+      "Chị bấm nút Có đi nhaa 💖",
+      "Chị iu em điiii 😭",
+      "Em chờ câu trả lời của chị 🥰",
+      "Hổng iu em là em khóc mất 😭"
+    ];
+
+    const expressions = [
+      "🐱",
+      "🥺",
+      "😭",
+      "🧐",
+      "😳",
+      "🍬",
+      "😌",
+      "😳",
+      "💖",
+      "😭",
+      "🥰",
+      "😭"
+    ];
+
+    noBtn.addEventListener('click', () => {
+      if (clickCount < messages.length - 2) {
+        fontSize += 5;
+        paddingV += 5;
+        paddingH += 25;
+
+        if (paddingH > window.innerWidth * 0.4) {
+          paddingH = window.innerWidth * 0.4;
+        }
+
+        yesBtn.style.fontSize = fontSize + 'px';
+        yesBtn.style.padding = `${paddingV}px ${paddingH}px`;
+
+        clickCount++;
+        question.innerText = messages[clickCount];
+        expression.innerText = expressions[clickCount];
+      } else if (clickCount === messages.length - 2) {
+        clickCount++;
+        question.innerText = messages[clickCount];
+        expression.innerText = expressions[clickCount];
+        noBtn.disabled = true;
+        noBtn.style.cursor = 'not-allowed';
+      }
+    });
+
+    yesBtn.addEventListener('click', () => {
+      overlay.style.display = 'flex';
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+    });
+  </script>
+</body>
+</html>
