@@ -1,0 +1,86 @@
+import pygame
+import pymunk
+import math
+import sys
+
+# Khởi tạo
+pygame.init()
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+clock = pygame.time.Clock()
+
+# Màu sắc
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (100, 100, 100)
+
+# Tạo không gian vật lý
+space = pymunk.Space()
+space.gravity = (0, 900)
+
+# Tạo nhân vật (hình tròn)
+mass = 1
+radius = 20
+body = pymunk.Body()
+body.position = 100, HEIGHT - 300
+shape = pymunk.Circle(body, radius)
+shape.mass = mass
+shape.elasticity = 0.5
+space.add(body, shape)
+
+# Tạo mặt đất
+ground_body = pymunk.Body(body_type=pymunk.Body.STATIC)
+ground_shape = pymunk.Segment(ground_body, (0, HEIGHT - 50), (WIDTH, HEIGHT - 50), 5)
+ground_shape.elasticity = 0.9
+space.add(ground_body, ground_shape)
+
+# Tạo địa hình đơn giản
+platforms = [
+    pymunk.Segment(ground_body, (200, HEIGHT - 100), (400, HEIGHT - 200), 5),
+    pymunk.Segment(ground_body, (450, HEIGHT - 250), (600, HEIGHT - 300), 5),
+]
+for p in platforms:
+    p.elasticity = 0.8
+    space.add(p)
+
+# Hàm vẽ vật thể
+def draw():
+    screen.fill(WHITE)
+    pygame.draw.circle(screen, BLACK, (int(body.position.x), int(body.position.y)), int(radius))
+
+    # Vẽ búa
+    mx, my = pygame.mouse.get_pos()
+    angle = math.atan2(my - body.position.y, mx - body.position.x)
+    length = 60
+    hammer_x = body.position.x + math.cos(angle) * length
+    hammer_y = body.position.y + math.sin(angle) * length
+    pygame.draw.line(screen, GRAY, (int(body.position.x), int(body.position.y)),
+                     (int(hammer_x), int(hammer_y)), 5)
+
+    # Vẽ địa hình
+    pygame.draw.line(screen, BLACK, ground_shape.a, ground_shape.b, 5)
+    for p in platforms:
+        pygame.draw.line(screen, BLACK, p.a, p.b, 5)
+
+# Vòng lặp game
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Điều khiển búa tác động lực
+    mx, my = pygame.mouse.get_pos()
+    angle = math.atan2(my - body.position.y, mx - body.position.x)
+    force_x = -math.cos(angle) * 5000
+    force_y = -math.sin(angle) * 5000
+    if pygame.mouse.get_pressed()[0]:  # Chuột trái nhấn
+        body.apply_force_at_local_point((force_x, force_y), (0, 0))
+
+    draw()
+    pygame.display.flip()
+    space.step(1/60)
+    clock.tick(60)
+
+pygame.quit()
+sys.exit()
